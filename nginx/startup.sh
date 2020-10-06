@@ -2,8 +2,11 @@
 
 if [ ! -f /etc/nginx/ssl/default.crt ]; then
     openssl genrsa -out "/etc/nginx/ssl/default.key" 2048
+    chown 644 "/etc/nginx/ssl/default.key"
     openssl req -new -key "/etc/nginx/ssl/default.key" -out "/etc/nginx/ssl/default.csr" -subj "/CN=default/O=default/C=UK"
+    chown 644 "/etc/nginx/ssl/default.csr"
     openssl x509 -req -days 365 -in "/etc/nginx/ssl/default.csr" -signkey "/etc/nginx/ssl/default.key" -out "/etc/nginx/ssl/default.crt"
+    chown 644 "/etc/nginx/ssl/default.crt"
 fi
 
 # Start crond in background

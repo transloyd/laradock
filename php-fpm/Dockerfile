@@ -25,13 +25,13 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # If you're in China, or you need to change sources, will be set CHANGE_SOURCE to true in .env.
 
-ARG CHANGE_SOURCE=false
-RUN if [ ${CHANGE_SOURCE} = true ]; then \
-    # Change application source from deb.debian.org to aliyun source
-    sed -i 's/deb.debian.org/mirrors.aliyun.com/' /etc/apt/sources.list && \
-    sed -i 's/security.debian.org/mirrors.aliyun.com/' /etc/apt/sources.list && \
-    sed -i 's/security-cdn.debian.org/mirrors.aliyun.com/' /etc/apt/sources.list \
-;fi
+#ARG CHANGE_SOURCE=false
+#RUN if [ ${CHANGE_SOURCE} = true ]; then \
+#    # Change application source from deb.debian.org to aliyun source
+#    sed -i 's/deb.debian.org/mirrors.aliyun.com/' /etc/apt/sources.list && \
+#    sed -i 's/security.debian.org/mirrors.aliyun.com/' /etc/apt/sources.list && \
+#    sed -i 's/security-cdn.debian.org/mirrors.aliyun.com/' /etc/apt/sources.list \
+#;fi
 
 # always run apt update when start and after add new source list, then clean up at end.
 RUN set -xe; \
@@ -238,15 +238,15 @@ RUN if [ ${INSTALL_PHPDBG} = true ]; then \
 # Blackfire:
 ###########################################################################
 
-ARG INSTALL_BLACKFIRE=false
-
-RUN if [ ${INSTALL_XDEBUG} = false -a ${INSTALL_BLACKFIRE} = true ]; then \
-    version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
-    && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
-    && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp \
-    && mv /tmp/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
-    && printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8707\n" > $PHP_INI_DIR/conf.d/blackfire.ini \
-;fi
+#ARG INSTALL_BLACKFIRE=false
+#
+#RUN if [ ${INSTALL_XDEBUG} = false -a ${INSTALL_BLACKFIRE} = true ]; then \
+#    version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
+#    && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
+#    && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp \
+#    && mv /tmp/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
+#    && printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8707\n" > $PHP_INI_DIR/conf.d/blackfire.ini \
+#;fi
 
 ###########################################################################
 # PHP REDIS EXTENSION
@@ -305,17 +305,17 @@ RUN if [ ${INSTALL_TAINT} = true ]; then \
 # MongoDB:
 ###########################################################################
 
-ARG INSTALL_MONGO=false
-
-RUN if [ ${INSTALL_MONGO} = true ]; then \
-    # Install the mongodb extension
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-      pecl install mongo && \
-      docker-php-ext-enable mongo \
-    ;fi && \
-    pecl install mongodb && \
-    docker-php-ext-enable mongodb \
-;fi
+#ARG INSTALL_MONGO=false
+#
+#RUN if [ ${INSTALL_MONGO} = true ]; then \
+#    # Install the mongodb extension
+#    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
+#      pecl install mongo && \
+#      docker-php-ext-enable mongo \
+#    ;fi && \
+#    pecl install mongodb && \
+#    docker-php-ext-enable mongodb \
+#;fi
 
 ###########################################################################
 # Xhprof:
@@ -377,24 +377,24 @@ RUN if [ ${INSTALL_AMQP} = true ]; then \
 # GEARMAN:
 ###########################################################################
 
-ARG INSTALL_GEARMAN=false
-
-RUN if [ ${INSTALL_GEARMAN} = true ]; then \
-    apt-get -y install libgearman-dev && \
-    cd /tmp && \
-    curl -L https://github.com/wcgallego/pecl-gearman/archive/gearman-2.0.5.zip -O && \
-    unzip gearman-2.0.5.zip && \
-    mv pecl-gearman-gearman-2.0.5 pecl-gearman && \
-    cd /tmp/pecl-gearman && \
-    phpize && \
-    ./configure && \
-    make -j$(nproc) && \
-    make install && \
-    cd / && \
-    rm /tmp/gearman-2.0.5.zip && \
-    rm -r /tmp/pecl-gearman && \
-    docker-php-ext-enable gearman \
-;fi
+#ARG INSTALL_GEARMAN=false
+#
+#RUN if [ ${INSTALL_GEARMAN} = true ]; then \
+#    apt-get -y install libgearman-dev && \
+#    cd /tmp && \
+#    curl -L https://github.com/wcgallego/pecl-gearman/archive/gearman-2.0.5.zip -O && \
+#    unzip gearman-2.0.5.zip && \
+#    mv pecl-gearman-gearman-2.0.5 pecl-gearman && \
+#    cd /tmp/pecl-gearman && \
+#    phpize && \
+#    ./configure && \
+#    make -j$(nproc) && \
+#    make install && \
+#    cd / && \
+#    rm /tmp/gearman-2.0.5.zip && \
+#    rm -r /tmp/pecl-gearman && \
+#    docker-php-ext-enable gearman \
+#;fi
 
 ###########################################################################
 # pcntl
@@ -533,16 +533,16 @@ RUN if [ ${INSTALL_OCI8} = true ]; then \
 # IonCube Loader:
 ###########################################################################
 
-ARG INSTALL_IONCUBE=false
-
-RUN if [ ${INSTALL_IONCUBE} = true ]; then \
-    # Install the php ioncube loader
-    curl -L -o /tmp/ioncube_loaders_lin_x86-64.tar.gz https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
-    && tar zxpf /tmp/ioncube_loaders_lin_x86-64.tar.gz -C /tmp \
-    && mv /tmp/ioncube/ioncube_loader_lin_${LARADOCK_PHP_VERSION}.so $(php -r "echo ini_get('extension_dir');")/ioncube_loader.so \
-    && printf "zend_extension=ioncube_loader.so\n" > $PHP_INI_DIR/conf.d/0ioncube.ini \
-    && rm -rf /tmp/ioncube* \
-;fi
+#ARG INSTALL_IONCUBE=false
+#
+#RUN if [ ${INSTALL_IONCUBE} = true ]; then \
+#    # Install the php ioncube loader
+#    curl -L -o /tmp/ioncube_loaders_lin_x86-64.tar.gz https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
+#    && tar zxpf /tmp/ioncube_loaders_lin_x86-64.tar.gz -C /tmp \
+#    && mv /tmp/ioncube/ioncube_loader_lin_${LARADOCK_PHP_VERSION}.so $(php -r "echo ini_get('extension_dir');")/ioncube_loader.so \
+#    && printf "zend_extension=ioncube_loader.so\n" > $PHP_INI_DIR/conf.d/0ioncube.ini \
+#    && rm -rf /tmp/ioncube* \
+#;fi
 
 ###########################################################################
 # Opcache:
@@ -561,11 +561,11 @@ COPY ./opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 # Mysqli Modifications:
 ###########################################################################
 
-ARG INSTALL_MYSQLI=false
-
-RUN if [ ${INSTALL_MYSQLI} = true ]; then \
-    docker-php-ext-install mysqli \
-;fi
+#ARG INSTALL_MYSQLI=false
+#
+#RUN if [ ${INSTALL_MYSQLI} = true ]; then \
+#    docker-php-ext-install mysqli \
+#;fi
 
 
 ###########################################################################
@@ -611,42 +611,42 @@ RUN if [ ${INSTALL_LDAP} = true ]; then \
 # SQL SERVER:
 ###########################################################################
 
-ARG INSTALL_MSSQL=false
-
-RUN set -eux; \
-  if [ ${INSTALL_MSSQL} = true ]; then \
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-      apt-get -y install freetds-dev libsybdb5 \
-      && ln -s /usr/lib/x86_64-linux-gnu/libsybdb.so /usr/lib/libsybdb.so \
-      && docker-php-ext-install mssql pdo_dblib \
-      && php -m | grep -q 'mssql' \
-      && php -m | grep -q 'pdo_dblib' \
-    ;else \
-      ###########################################################################
-      # Ref from https://github.com/Microsoft/msphpsql/wiki/Dockerfile-for-adding-pdo_sqlsrv-and-sqlsrv-to-official-php-image
-      ###########################################################################
-      # Add Microsoft repo for Microsoft ODBC Driver 13 for Linux
-      apt-get install -y apt-transport-https gnupg \
-      && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-      && curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list \
-      && apt-get update -yqq \
-      # Install Dependencies
-      && ACCEPT_EULA=Y apt-get install -y unixodbc unixodbc-dev libgss3 odbcinst msodbcsql17 locales \
-      && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
-      # link local aliases
-      && ln -sfn /etc/locale.alias /usr/share/locale/locale.alias \
-      && locale-gen \
-      # Install pdo_sqlsrv and sqlsrv from PECL. Replace pdo_sqlsrv-4.1.8preview with preferred version.
-      && if [ $(php -r "echo PHP_MINOR_VERSION;") = "0" ]; then \
-        pecl install pdo_sqlsrv-5.3.0 sqlsrv-5.3.0 \
-      ;else \
-        pecl install pdo_sqlsrv sqlsrv \
-      ;fi \
-      && docker-php-ext-enable pdo_sqlsrv sqlsrv \
-      && php -m | grep -q 'pdo_sqlsrv' \
-      && php -m | grep -q 'sqlsrv' \
-    ;fi \
-  ;fi
+#ARG INSTALL_MSSQL=false
+#
+#RUN set -eux; \
+#  if [ ${INSTALL_MSSQL} = true ]; then \
+#    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
+#      apt-get -y install freetds-dev libsybdb5 \
+#      && ln -s /usr/lib/x86_64-linux-gnu/libsybdb.so /usr/lib/libsybdb.so \
+#      && docker-php-ext-install mssql pdo_dblib \
+#      && php -m | grep -q 'mssql' \
+#      && php -m | grep -q 'pdo_dblib' \
+#    ;else \
+#      ###########################################################################
+#      # Ref from https://github.com/Microsoft/msphpsql/wiki/Dockerfile-for-adding-pdo_sqlsrv-and-sqlsrv-to-official-php-image
+#      ###########################################################################
+#      # Add Microsoft repo for Microsoft ODBC Driver 13 for Linux
+#      apt-get install -y apt-transport-https gnupg \
+#      && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+#      && curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+#      && apt-get update -yqq \
+#      # Install Dependencies
+#      && ACCEPT_EULA=Y apt-get install -y unixodbc unixodbc-dev libgss3 odbcinst msodbcsql17 locales \
+#      && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
+#      # link local aliases
+#      && ln -sfn /etc/locale.alias /usr/share/locale/locale.alias \
+#      && locale-gen \
+#      # Install pdo_sqlsrv and sqlsrv from PECL. Replace pdo_sqlsrv-4.1.8preview with preferred version.
+#      && if [ $(php -r "echo PHP_MINOR_VERSION;") = "0" ]; then \
+#        pecl install pdo_sqlsrv-5.3.0 sqlsrv-5.3.0 \
+#      ;else \
+#        pecl install pdo_sqlsrv sqlsrv \
+#      ;fi \
+#      && docker-php-ext-enable pdo_sqlsrv sqlsrv \
+#      && php -m | grep -q 'pdo_sqlsrv' \
+#      && php -m | grep -q 'sqlsrv' \
+#    ;fi \
+#  ;fi
 
 ###########################################################################
 # Image optimizers:
